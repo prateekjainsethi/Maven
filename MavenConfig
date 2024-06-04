@@ -1,0 +1,98 @@
+How to Handle the multiple Version dependencies in your project
+
+Use <dependencyManagement> Section
+
+The <dependencyManagement> section allows you to specify the version of a dependency that will be used throughout your project, avoiding version conflicts.
+ <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>your.dependency.group</groupId>
+                <artifactId>your-dependency-artifact</artifactId>
+                <version>desired-version</version>
+            </dependency>
+        </dependencies>
+</dependencyManagement>
+
+
+Override Version in Specific Modules
+If you have a multi-module project and you want to use different versions in different modules, you can override the dependency version in the specific module’s pom.xml.
+
+Parent 
+
+   <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>your.dependency.group</groupId>
+                <artifactId>your-dependency-artifact</artifactId>
+                <version>default-version</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>module1</module>
+        <module>module2</module>
+    </modules>
+
+Child 1
+
+<project>
+    <parent>
+        <groupId>your.parent.group</groupId>
+        <artifactId>your-parent-artifact</artifactId>
+        <version>parent-version</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>your.dependency.group</groupId>
+            <artifactId>your-dependency-artifact</artifactId>
+            <version>specific-version-for-module1</version>
+        </dependency>
+    </dependencies>
+</project>
+
+
+Child 2
+<project>
+    <parent>
+        <groupId>your.parent.group</groupId>
+        <artifactId>your-parent-artifact</artifactId>
+        <version>parent-version</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>your.dependency.group</groupId>
+            <artifactId>your-dependency-artifact</artifactId>
+            <!-- Will use the default version from dependencyManagement in parent pom -->
+        </dependency>
+    </dependencies>
+</project>
+
+
+
+Use <exclusions> to Manage Conflicts
+If a dependency is bringing in a conflicting version of another dependency, you can exclude it and then explicitly add the desired version.
+
+<dependencies>
+    <dependency>
+        <groupId>some.other.group</groupId>
+        <artifactId>some-other-artifact</artifactId>
+        <version>some-version</version>
+        <exclusions>
+            <exclusion>
+                <groupId>conflicting.dependency.group</groupId>
+                <artifactId>conflicting-dependency-artifact</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+
+    <dependency>
+        <groupId>conflicting.dependency.group</groupId>
+        <artifactId>conflicting-dependency-artifact</artifactId>
+        <version>desired-version</version>
+    </dependency>
+</dependencies>
+
+
